@@ -28,11 +28,11 @@ This setup is especially useful if you're using a **Mac layout keyboard on a Win
 
 - `fix_mac_keyboard.ps1` — Main PowerShell script
 
-## 🔒 Admin Privileges
+~## 🔒 Admin Privileges~
 
-The script starts `keymapperd.exe` with elevated privileges to allow remapping of special keys like the Windows key and keys in admin apps (like Task Manager).
+~The script starts `keymapperd.exe` with elevated privileges to allow remapping of special keys like the Windows key and keys in admin apps (like Task Manager).~
 
-## 📝 Tip
+~## 📝 Tip~
 
-For silent startup without UAC prompts, schedule this script using **Windows Task Scheduler** with **"Run with highest privileges"**.
+~For silent startup without UAC prompts, schedule this script using **Windows Task Scheduler** with **"Run with highest privileges"**.~
 
