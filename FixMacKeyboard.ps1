@@ -1,27 +1,30 @@
-# Check for currently connected Bluetooth keyboards
-$keyboardConnected = Get-CimInstance -Namespace root\cimv2 -ClassName Win32_PnPEntity |
-Where-Object {
-    $_.PNPClass -eq "Keyboard" -and
-    $_.Name -match "Bluetooth" -and
-    $_.DeviceID -match "BTHENUM"
+# Simple and reliable Bluetooth keyboard detector and launcher
+# Check for active Bluetooth HID device using the device's connection status
+
+# Get Bluetooth keyboard connection status - looking specifically for connected devices
+$activeBtKeyboard = Get-PnpDevice | Where-Object {
+    ($_.Class -eq "Bluetooth" -or $_.Class -eq "HIDClass") -and
+    ($_.FriendlyName -like "*keyboard*" -or $_.FriendlyName -like "*Bluetooth HID*") -and
+    $_.Status -eq "OK" -and
+    # Only consider a device connected if it has an active connection
+    $_.Problem -eq 0
 }
 
-Write-Host "Detected connected Bluetooth Keyboards:"
-$keyboardConnected | Format-Table Name, Status, DeviceID
-
-# Paths to Key Mapper executables
+# Path to Key Mapper
 $keyMapperFolder = "C:\misc\keymapper-4.11.4-Windows-x86_64"
 $keymapperExe = Join-Path $keyMapperFolder "keymapper.exe"
 $keymapperdExe = Join-Path $keyMapperFolder "keymapperd.exe"
 
-# Launch Key Mapper only if Bluetooth keyboard is connected
-# Start keymapperd.exe better with elevated privileges -Verb RunAs
-
-if ($keyboardConnected) {
-    Write-Host "Bluetooth keyboard detected. Launching Key Mapper..."
-
+# Check result and take action
+if ($activeBtKeyboard) {
+    Write-Host "Active Bluetooth keyboard detected:"
+    $activeBtKeyboard | ForEach-Object {
+        Write-Host "- $($_.FriendlyName) is connected"
+    }
+    
+    # Start Key Mapper
     Start-Process -FilePath $keymapperdExe
     Start-Process -FilePath $keymapperExe
 } else {
-    Write-Host "No Bluetooth keyboard detected."
+    Write-Host "No active Bluetooth keyboard detected."
 }
