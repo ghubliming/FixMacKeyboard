@@ -21,7 +21,10 @@ if ($activeBtKeyboard) {
     $activeBtKeyboard | ForEach-Object {
         Write-Host "- $($_.FriendlyName) is connected"
     }
-    
+
+    # Terminate existing instances first
+    Stop-Process -Name "keymapper", "keymapperd" -Force -ErrorAction SilentlyContinue
+
     # Start Key Mapper
     Start-Process -FilePath $keymapperdExe
     Start-Process -FilePath $keymapperExe
